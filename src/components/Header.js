@@ -47,6 +47,7 @@ const Header = () => {
         </button>
       </div>
       <div className='col-span-1'>
+        
         <HiUserCircle size={40}/>
       </div>
     </div>
