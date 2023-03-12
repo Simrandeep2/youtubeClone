@@ -39,7 +39,6 @@ const Header = () => {
         <input type="text" placeholder='Enter text to search'
           value={searchQuery}
           onChange={(e)=>
-            // debounce(e.target.value)
             setSearchQuery(e.target.value)
           }
          className='border-2 border-gray-300 p-1 w-1/2 rounded-l-full' />
