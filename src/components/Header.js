@@ -3,15 +3,18 @@ import {HiMenu} from "react-icons/hi"
 import {ImYoutube2} from "react-icons/im"
 import {HiUserCircle} from "react-icons/hi"
 import {BiSearch} from "react-icons/bi"
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toggleMenu } from '../utils/appSlice'
 import { searchAPI, YOUTUBE_SEARCH_API } from '../constants'
 import { GOOGLE_API_KEY } from '../constants'
+import {cacheResults} from "../utils/searchSlice"
+import store from '../utils/Store'
 const Header = () => {
   const dispatch=useDispatch();
   const [suggestions,setSuggestions]=useState([])
   const [searchQuery,setSearchQuery]=useState("")
   const [showSuggestions,setShowSuggestions]=useState(false)
+  const searchCache=useSelector((store)=>store.search)
   const toggleMenuHandler=()=>
   {
     console.log("click")
@@ -22,8 +25,14 @@ const Header = () => {
       // console.log(searchQuery)
      const timer=setTimeout(()=>
       {
-        console.log("inside")
-          setYoutubeSuggestions()
+         if(searchCache[searchQuery])
+         {
+            setSuggestions(searchCache[searchQuery])
+         }
+          else
+          {
+            setYoutubeSuggestions()
+          }
       },200)
       return ()=>clearTimeout(timer)
   },[searchQuery])
@@ -33,7 +42,8 @@ const Header = () => {
     const data=await fetch(searchAPI(searchQuery))
     // const data=await fetch("https://suggestqueries-clients6.youtube.com/complete/search?client=youtube-reduced&hl=en&gs_ri=youtube-reduced&ds=yt&cp=3&gs_id=100&q=Nectar&xhr=t&xssi=t&gl=us")
     const json=await data.json();
-    setSuggestions(json)
+    setSuggestions(json[1])
+    dispatch(cacheResults({[searchQuery]:json[1]}))
     console.log("search api response:::",json)
     }
   }
